@@ -1,0 +1,84 @@
+/* Editor and playable-game polish */
+.editor-intro {
+  padding: 54px 0 48px;
+  background: var(--ink);
+  color: var(--white);
+  border-bottom: 1px solid #554c5e;
+}
+.editor-intro .eyebrow { margin-bottom: 18px; color: #c9becf; }
+.editor-intro h1 { margin: 0 0 18px; font-size: clamp(2.8rem, 5vw, 5rem); letter-spacing: -.055em; }
+.editor-intro p:not(.eyebrow) { max-width: 67ch; margin-bottom: 24px; color: #beb4c4; font-size: .9rem; }
+.editor-intro .shell > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.editor-intro .shell > div span { padding: 6px 10px; border: 1px solid #62586b; border-radius: 99px; color: #c8bdce; font: 500 .54rem "DM Mono", monospace; }
+.studio-page { padding-top: 26px; }
+.project-menu { gap: 2px; border: 1px solid #625a69; border-radius: 6px; padding: 2px; margin-left: 10px; }
+.project-menu button { padding: 4px 8px; border-radius: 4px; }
+.project-menu button:hover { background: #4a4253; }
+.pane-title > div { display: flex; gap: 3px; }
+.pane-title button { padding: 4px 6px; border: 1px solid transparent; border-radius: 4px; font: 500 .49rem "DM Mono", monospace; }
+.pane-title button:hover { border-color: #5e5567; background: #393240; }
+.tree-folder > summary { display: flex; align-items: center; gap: 7px; padding: 7px 7px 4px; color: #a69ca9; cursor: pointer; list-style: none; font: 500 .61rem "DM Mono", monospace; }
+.tree-folder > summary::-webkit-details-marker { display: none; }
+.tree-folder > summary span { transition: transform .15s; }
+.tree-folder[open] > summary span { transform: rotate(90deg); }
+.tree-children { padding-left: 16px; }
+.mobile-pane-tabs { display: none; }
+.canvas-wrap { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.canvas-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100% - 28px); }
+.canvas-wrap .canvas-frame canvas { width: 100%; height: 100%; max-height: none; }
+.canvas-state { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 25px; background: rgba(20, 17, 25, .84); color: #d9d1df; text-align: center; pointer-events: none; }
+.canvas-state b { font-size: .72rem; }
+.canvas-state span { color: #93899a; font: 400 .54rem/1.5 "DM Mono", monospace; }
+.game-touch-controls { display: none; }
+.live-game-controls button:focus-visible,
+.example-picker button:focus-visible,
+.source-file-tabs button:focus-visible,
+.studio button:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.example-picker button { position: relative; transition: transform .18s, box-shadow .18s, background .18s; }
+.example-picker button:not(.active):hover { transform: translateX(3px); background: rgba(255, 255, 255, .55); }
+.example-picker button.active i { color: var(--berry-dark); }
+.live-game > pre { max-height: 140px; overflow: auto; white-space: pre-wrap; }
+.page-hero.pink { min-height: 420px; }
+.page-hero.pink .page-hero-copy { padding-block: 64px; }
+.studio-editor-body .editor-stack pre,
+.studio-editor-body .editor-stack textarea { font-size: .76rem; }
+
+@media (max-width: 760px) {
+  .editor-intro { padding: 36px 0 32px; }
+  .editor-intro h1 { font-size: 2.65rem; line-height: .98; }
+  .editor-intro p:not(.eyebrow) { font-size: .78rem; }
+  .studio-page { padding-top: 8px; padding-bottom: 65px; }
+  .studio { box-shadow: 4px 5px 0 #18141e; }
+  .studio-topbar { display: grid; grid-template-columns: 1fr auto; }
+  .studio-project-name > b,
+  .studio-project-name > .berry-mini { display: none; }
+  .project-menu { margin: 0; padding: 1px; border-color: #5b5263; }
+  .project-menu button { padding: 5px 7px; font-size: .48rem; }
+  .studio-run-actions { gap: 5px; }
+  .studio-stop { padding-inline: 7px; }
+  .studio-run-actions .button.run { padding-inline: 12px; }
+  .mobile-pane-tabs { height: 43px; display: grid; grid-template-columns: 1fr 1fr 1.35fr; background: #29242f; border-bottom: 1px solid #443d4d; }
+  .mobile-pane-tabs button { border: 0; border-right: 1px solid #443d4d; background: transparent; color: #968d9c; font: 500 .55rem "DM Mono", monospace; }
+  .mobile-pane-tabs button.active { background: #3a3242; color: white; box-shadow: inset 0 -2px var(--berry); }
+  .studio-grid { display: block; height: 560px; }
+  .studio-grid > .project-tree,
+  .studio-grid > .studio-editor,
+  .studio-grid > .studio-preview { display: none; width: 100%; height: 560px; border: 0; }
+  .studio-grid > .mobile-active { display: flex; }
+  .project-tree-list { padding: 15px 10px; }
+  .project-tree-list button { padding: 10px; font-size: .7rem; }
+  .game-touch-controls { display: flex; gap: 7px; margin-top: 10px; touch-action: none; }
+  .game-touch-controls button { width: 42px; height: 34px; border: 1px solid #5a5162; border-radius: 7px; background: #2c2733; color: #e8e0ec; font: 700 .9rem "DM Mono", monospace; }
+  .game-touch-controls button:active { background: var(--yellow); color: var(--ink); }
+  .canvas-wrap { justify-content: flex-start; padding-top: 12px; }
+  .canvas-frame { max-height: calc(100% - 76px); }
+  .canvas-wrap p { margin-top: 7px; }
+  .editor-help { padding: 70px 0 90px; }
+  .editor-help > h2 { font-size: 2.5rem; margin-bottom: 35px; }
+  .page-hero { min-height: 390px; }
+  .page-hero-copy { padding: 58px 0; }
+  .page-hero h1 { font-size: 3.4rem; }
+  .page-hero.pink { min-height: 365px; }
+  .page-hero.pink .page-hero-copy { padding-block: 40px; }
+  .page-hero.pink h1 { font-size: 3rem; }
+}
