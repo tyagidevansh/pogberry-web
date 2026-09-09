@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { history, historyKeymap, indentWithTab } from '@codemirror/commands'
+import { EditorState } from '@codemirror/state'
+import { drawSelection, dropCursor, EditorView, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers, rectangularSelection } from '@codemirror/view'
 import { gameProjects } from './data'
-import { highlight } from './components'
 import { createPogberryRuntime } from './lib/pogberry'
 
 const keyNames = { ArrowLeft: 'left', a: 'left', A: 'left', ArrowRight: 'right', d: 'right', D: 'right', ArrowUp: 'up', w: 'up', W: 'up', ArrowDown: 'down', s: 'down', S: 'down', ' ': 'space' }
@@ -148,6 +150,73 @@ export function LiveGame({ project, autoPlay = true }) {
   return <div className="live-game"><GameCanvas canvasRef={canvasRef} status={status} running={running} onKeyDown={(event) => key(event, true)} onKeyUp={(event) => key(event, false)} onBlur={releaseKeys} onControl={(name, down) => sessionRef.current?.setKey(name, down)} />{error && <pre>{error}</pre>}<div className="live-game-controls"><button onClick={() => start()}>{running ? 'restart' : 'run game'}</button><span>{project.controls}</span></div></div>
 }
 
+const editorTheme = EditorView.theme({
+  '&': { height: '100%', backgroundColor: '#211d29', color: '#d8d0e1' },
+  '.cm-scroller': { overflow: 'auto', fontFamily: '"DM Mono", monospace', fontSize: '.76rem', lineHeight: '1.75' },
+  '.cm-content': { minHeight: '100%', padding: '18px 0', caretColor: '#fff' },
+  '.cm-line': { padding: '0 18px' },
+  '.cm-gutters': { minHeight: '100%', borderRight: '1px solid #342e3e', backgroundColor: '#1c1923', color: '#625a6c' },
+  '.cm-gutterElement': { padding: '0 12px 0 0' },
+  '.cm-activeLine': { backgroundColor: 'rgba(255, 255, 255, .035)' },
+  '.cm-activeLineGutter': { backgroundColor: '#28232f', color: '#b8afc0' },
+  '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': { backgroundColor: 'rgba(244, 200, 77, .32)' },
+  '&.cm-focused': { outline: 'none' },
+  '.cm-cursor, &.cm-focused .cm-cursor': { borderLeftColor: '#fff' },
+}, { dark: true })
+
+function CodeEditor({ source, file, onChange }) {
+  const hostRef = useRef(null)
+  const viewRef = useRef(null)
+  const callbacksRef = useRef({ file, onChange })
+  const selectionsRef = useRef(new Map())
+  const syncingRef = useRef(false)
+  callbacksRef.current = { file, onChange }
+
+  useEffect(() => {
+    const view = new EditorView({
+      state: EditorState.create({
+        doc: source,
+        extensions: [
+          lineNumbers(),
+          highlightActiveLineGutter(),
+          history(),
+          drawSelection(),
+          dropCursor(),
+          rectangularSelection(),
+          highlightActiveLine(),
+          keymap.of([indentWithTab, ...historyKeymap]),
+          EditorView.contentAttributes.of({ 'aria-label': `Editing ${file}`, spellcheck: 'false' }),
+          EditorView.updateListener.of((update) => {
+            const { file: activeFile, onChange: updateSource } = callbacksRef.current
+            if (update.selectionSet) selectionsRef.current.set(activeFile, update.state.selection.main)
+            if (update.docChanged && !syncingRef.current) updateSource(update.state.doc.toString())
+          }),
+          editorTheme,
+        ],
+      }),
+      parent: hostRef.current,
+    })
+    viewRef.current = view
+    return () => { view.destroy(); viewRef.current = null }
+  }, [])
+
+  useEffect(() => {
+    const view = viewRef.current
+    if (!view || view.state.doc.toString() === source) return
+    const savedSelection = selectionsRef.current.get(file)
+    const length = source.length
+    const selection = {
+      anchor: Math.min(savedSelection?.anchor ?? 0, length),
+      head: Math.min(savedSelection?.head ?? 0, length),
+    }
+    syncingRef.current = true
+    view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: source }, selection })
+    syncingRef.current = false
+  }, [file, source])
+
+  return <div className="code-editor" ref={hostRef} />
+}
+
 export default function PogberryStudio({ project = gameProjects.firstGame, compact = false, storageKey = 'pogberry-project-v2' }) {
   const initialFiles = compact ? project.files : savedProject(storageKey, project.files)
   const [files, setFiles] = useState(initialFiles)
@@ -165,7 +234,6 @@ export default function PogberryStudio({ project = gameProjects.firstGame, compa
   const runVersion = useRef(0)
 
   const source = files[active] ?? ''
-  const lineNumbers = useMemo(() => Array.from({ length: source.split('\n').length }, (_, index) => index + 1).join('\n'), [source])
   useEffect(() => {
     const session = createPogberryRuntime()
     sessionRef.current = session
@@ -288,26 +356,12 @@ export default function PogberryStudio({ project = gameProjects.firstGame, compa
     event.preventDefault(); sessionRef.current?.setKey(name, down)
   }
   const releaseKeys = () => gameKeys.forEach((name) => sessionRef.current?.setKey(name, false))
-  const editorKeyDown = (event) => {
-    if (event.key !== 'Tab') return
-    event.preventDefault()
-    const start = event.currentTarget.selectionStart
-    const end = event.currentTarget.selectionEnd
-    updateSource(source.slice(0, start) + '  ' + source.slice(end))
-    requestAnimationFrame(() => { event.currentTarget.selectionStart = event.currentTarget.selectionEnd = start + 2 })
-  }
-  const syncEditorScroll = (event) => {
-    const layer = event.currentTarget.previousElementSibling
-    layer.scrollTop = event.currentTarget.scrollTop
-    layer.scrollLeft = event.currentTarget.scrollLeft
-  }
-
   return <div className={`studio${compact ? ' compact' : ''}`}>
     <div className="studio-topbar"><div className="studio-project-name"><span className="berry-mini">●</span><b>my-pogberry-game</b><small>browser project</small><div className="project-menu"><button onClick={newProject}>New</button><button onClick={() => importRef.current?.click()}>Import</button><button onClick={exportProject}>Export</button><input ref={importRef} type="file" accept="application/json,.json" onChange={importProject} hidden /></div></div><div className="studio-run-actions"><span className={`runtime-light ${runtime}`}>{runtime}</span>{running && <button className="studio-stop" onClick={stop}>■ Stop</button>}<button className="button run" onClick={run}>▶ Run</button></div></div>
     <nav className="mobile-pane-tabs" aria-label="Editor panels"><button className={mobilePane === 'project' ? 'active' : ''} onClick={() => setMobilePane('project')}>Project</button><button className={mobilePane === 'code' ? 'active' : ''} onClick={() => setMobilePane('code')}>Code</button><button className={mobilePane === 'preview' ? 'active' : ''} onClick={() => setMobilePane('preview')}>Game / output</button></nav>
     <div className="studio-grid">
       <aside className={`project-tree${mobilePane === 'project' ? ' mobile-active' : ''}`}><div className="pane-title"><span>PROJECT</span><div><button onClick={addFile}>＋ File</button><button onClick={addFolder}>＋ Folder</button></div></div><ProjectTree files={files} folders={folders} active={active} onOpen={openFile} /><div className="tree-actions"><button onClick={renameFile}>Rename file</button><button onClick={deleteFile}>Delete file</button></div></aside>
-      <section className={`studio-editor${mobilePane === 'code' ? ' mobile-active' : ''}`}><div className="editor-tabs">{tabs.map((path) => <button key={path} className={active === path ? 'active' : ''} onClick={() => setActive(path)}><span>{path.endsWith('.pb') ? 'pb' : 'txt'}</span>{path.split('/').at(-1)}<i onClick={(event) => { event.stopPropagation(); closeTab(path) }}>×</i></button>)}</div><div className="studio-editor-body"><div className="line-numbers">{lineNumbers}</div><div className="editor-stack"><pre aria-hidden="true"><code dangerouslySetInnerHTML={{ __html: `${highlight(source)}\n` }} /></pre><textarea value={source} onChange={(event) => updateSource(event.target.value)} onKeyDown={editorKeyDown} onScroll={syncEditorScroll} spellCheck="false" aria-label={`Editing ${active}`} /></div></div></section>
+      <section className={`studio-editor${mobilePane === 'code' ? ' mobile-active' : ''}`}><div className="editor-tabs">{tabs.map((path) => <button key={path} className={active === path ? 'active' : ''} onClick={() => setActive(path)}><span>{path.endsWith('.pb') ? 'pb' : 'txt'}</span>{path.split('/').at(-1)}<i onClick={(event) => { event.stopPropagation(); closeTab(path) }}>×</i></button>)}</div><div className="studio-editor-body"><CodeEditor source={source} file={active} onChange={updateSource} /></div></section>
       <section className={`studio-preview${mobilePane === 'preview' ? ' mobile-active' : ''}`}><div className="preview-tabs"><button className={panel === 'game' ? 'active' : ''} onClick={() => setPanel('game')}>Game</button><button className={panel === 'terminal' ? 'active' : ''} onClick={() => setPanel('terminal')}>Terminal{output && <i />}</button></div>{panel === 'game' ? <GameCanvas canvasRef={canvasRef} running={running} status={runtime} onKeyDown={(event) => key(event, true)} onKeyUp={(event) => key(event, false)} onBlur={releaseKeys} onControl={(name, down) => sessionRef.current?.setKey(name, down)} /> : <div className="studio-terminal"><div><span>OUTPUT</span><button onClick={() => setOutput('')}>clear</button></div><pre>{output || 'Run the project to see output and diagnostics.'}</pre></div>}</section>
     </div>
     <div className="studio-status"><span>main: {active}</span><span>{source.split('\n').length} lines</span><span>Pogberry · WebAssembly</span></div>

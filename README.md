@@ -1,6 +1,6 @@
 # Pogberry website
 
-The multi-page site, complete language and game guide, playable example projects, downloads, architecture overview, and browser editor for [Pogberry](https://github.com/tyagidevansh/pogberry).
+The site with complete language and game guide, playable example projects, downloads, architecture overview, and browser editor for [Pogberry](https://github.com/tyagidevansh/pogberry).
 
 ## Run the site
 
