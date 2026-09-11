@@ -33,5 +33,5 @@ If the language repository lives somewhere else:
 POGBERRY_DIR=/absolute/path/to/pogberry npm run build:wasm
 ```
 
-The bridge supports ordinary scripts, registered source modules, and persistent game sessions. Its browser host currently provides `engine.graphics` and `engine.input`, calls `init`, `update`, and `draw`, and sends drawing commands back to Canvas. The editor includes a file tree, directories, tabs, local persistence, project import/export, terminal diagnostics, keyboard input, and a live game viewport.
+The bridge supports ordinary scripts, virtual source modules (including `std.math`), and persistent game sessions. Its browser host provides `pb_gui`, `std.math`, `engine.graphics`, and `engine.input`, calls `init`, `update`, and `draw`, and serializes drawing commands back to Canvas. The editor includes a file tree, directories, tabs, local persistence, project import/export, terminal diagnostics, keyboard input, and a live game viewport.
 

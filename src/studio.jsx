@@ -27,9 +27,30 @@ function renderCommands(canvas, source) {
     } else if (name === 'rect') {
       context.fillStyle = `rgb(${values[4]},${values[5]},${values[6]})`
       context.fillRect(values[0], values[1], values[2], values[3])
+    } else if (name === 'rectLines') {
+      context.strokeStyle = `rgb(${values[4]},${values[5]},${values[6]})`
+      context.lineWidth = 1
+      context.strokeRect(values[0], values[1], values[2], values[3])
+    } else if (name === 'roundedRect') {
+      context.fillStyle = `rgb(${values[6]},${values[7]},${values[8]})`
+      if (typeof context.roundRect === 'function') {
+        context.beginPath()
+        context.roundRect(values[0], values[1], values[2], values[3], values[4] * Math.min(values[2], values[3]) / 2)
+        context.fill()
+      } else {
+        context.fillRect(values[0], values[1], values[2], values[3])
+      }
     } else if (name === 'circle') {
       context.fillStyle = `rgb(${values[3]},${values[4]},${values[5]})`
       context.beginPath(); context.arc(values[0], values[1], values[2], 0, Math.PI * 2); context.fill()
+    } else if (name === 'circleLines') {
+      context.strokeStyle = `rgb(${values[3]},${values[4]},${values[5]})`
+      context.lineWidth = 1
+      context.beginPath(); context.arc(values[0], values[1], values[2], 0, Math.PI * 2); context.stroke()
+    } else if (name === 'line') {
+      context.strokeStyle = `rgb(${values[4]},${values[5]},${values[6]})`
+      context.lineWidth = 1
+      context.beginPath(); context.moveTo(values[0], values[1]); context.lineTo(values[2], values[3]); context.stroke()
     } else if (name === 'text') {
       const encoded = parts.pop()
       context.fillStyle = `rgb(${values[3]},${values[4]},${values[5]})`

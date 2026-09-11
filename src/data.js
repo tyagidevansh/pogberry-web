@@ -9,12 +9,20 @@ print("Berries packed: " + str(len(berries)));`,
   collections: `let inventory = ["map", "key", "potion"];
 inventory.push("small sword");
 inventory.remove("map");
+inventory.sort();
 
 let stats = {"health": 100, "level": 2};
 stats["health"] = 85;
 
-print(inventory);
-print(stats);`,
+print("Sorted inventory: " + str(inventory));
+print("Has level? " + str(stats.has("level")));
+print("Health: " + str(stats.get("health", 0)));`,
+  math: `use "std.math";
+
+print("Pi: " + str(math.pi));
+print("Sqrt(81): " + str(math.sqrt(81)));
+print("Clamped: " + str(math.clamp(14, 0, 10)));
+print("Min(10, 20): " + str(math.min(10, 20)));`,
   classes: `class Actor {
   init(name) { this.name = name; }
   speak() { print(this.name + " makes a noise."); }
@@ -219,25 +227,27 @@ fun draw() {
 }
 
 export const installOptions = {
-  linux: { label: 'Linux', title: 'Build and install the CLI', text: 'Build the VM and install the CLI, engine adapter, and standard library for your user.', requires: ['gcc', 'make', 'readline', 'git'], command: `git clone https://github.com/tyagidevansh/pogberry.git
+  linux: { label: 'Linux', title: 'Build and install the CLI & GUI', text: 'Build the VM, Raylib 2D engine adapter, standard library, and CLI for your user.', requires: ['gcc', 'make', 'raylib', 'readline', 'git'], command: `git clone https://github.com/tyagidevansh/pogberry.git
 cd pogberry
 make
+make raylib-backend
 make test
 make install PREFIX="$HOME/.local"
-pb repl` },
+pb run examples/games/cyber_runner` },
   windows: { label: 'Windows', title: 'Build on Windows', text: 'Use a Developer Command Prompt or MinGW environment with GCC and Make available.', requires: ['gcc', 'make', 'git'], command: `git clone https://github.com/tyagidevansh/pogberry.git
 cd pogberry
 make
-build\\pb.exe repl` },
+build\\pb.exe run examples/basics/hello_world.pb` },
   source: { label: 'Embed it', title: 'Embed Pogberry in a host', text: 'Build the VM as a shared library and include the public C header in your application.', requires: ['C11', 'make'], command: `git clone https://github.com/tyagidevansh/pogberry.git
 cd pogberry
 make shared
 
 # Linux: build/libpb.so
 # Windows: build/pb.dll
-# Header: src/headers/pb.h` },
+# Public embedding header: src/headers/pb.h` },
   web: { label: 'WebAssembly', title: 'Compile the VM for the browser', text: 'Emscripten compiles the same scanner, compiler, bytecode VM, and garbage collector used by the CLI.', requires: ['emsdk', 'emcc'], command: `source /path/to/emsdk/emsdk_env.sh
 cd pb-site
 npm run build:wasm
 npm run dev` }
 }
+

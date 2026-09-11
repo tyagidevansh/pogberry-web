@@ -8,3 +8,11 @@
 
 @media(max-width:1100px){.studio-grid{grid-template-columns:180px 1fr}.studio-preview{grid-column:1/3;border-top:1px solid #443d4d;height:430px}.studio-grid{height:1050px}.examples-workbench{grid-template-columns:240px 1fr}.manual-layout{grid-template-columns:180px minmax(0,1fr);gap:45px}}
 @media(max-width:760px){.studio-page{padding-top:14px}.studio-wide{width:calc(100% - 12px)}.studio-topbar{height:auto;min-height:58px;gap:8px;padding:9px}.studio-project-name small,.runtime-light{display:none}.studio-grid{display:flex;flex-direction:column;height:auto}.project-tree{height:180px;border-right:0;border-bottom:1px solid #443d4d}.studio-editor{height:530px;border-right:0}.studio-preview{height:400px}.studio-status span:nth-child(2){display:none}.editor-help>div{grid-template-columns:1fr}.manual-layout{display:block;padding-top:45px}.manual-nav{position:static;display:flex;flex-direction:row;overflow:auto;border:0;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:50px}.manual-nav strong{display:none}.manual-nav a{white-space:nowrap;border:1px solid var(--line);border-radius:99px;padding:7px 11px;margin-right:6px}.doc-table>div,.api-reference>div{grid-template-columns:1fr;gap:7px}.api-columns,.lifecycle-table,.project-source-pair{grid-template-columns:1fr}.examples-workbench{display:block;padding-top:45px}.example-picker{display:flex;flex-direction:row;overflow:auto;margin-bottom:45px}.example-picker button{min-width:220px}.example-player-head,.example-source-head,.example-next{display:block}.example-player-head>div:last-child{margin-bottom:20px}.source-file-tabs{margin-top:20px;overflow:auto}.example-next .button{margin-top:15px}.playable-home-grid{grid-template-columns:1fr}.manual h2{font-size:2.8rem}.tba-section{padding:25px!important}}
+
+/* Feature grid enhancements for 6 cards */
+.feature-card.yellow { background: var(--yellow); }
+.feature-card.coral { transform: none; }
+.feature-card.coral:hover { transform: translateY(-7px) rotate(-.5deg); }
+.feature-icon.math { font-size: 2.8rem; }
+.feature-icon.shapes { font-size: 2.2rem; letter-spacing: 6px; }
+

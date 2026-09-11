@@ -27,6 +27,7 @@ emcc \
   -sMODULARIZE=1 \
   -sEXPORT_ES6=1 \
   -sENVIRONMENT=web,worker \
+  -sENVIRONMENT=web,worker,node \
   -sALLOW_MEMORY_GROWTH=1 \
   -sINITIAL_MEMORY=16777216 \
   -sSTACK_SIZE=1048576 \

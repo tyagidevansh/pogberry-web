@@ -20,7 +20,7 @@ export function Header() {
 }
 
 export function Footer() {
-  return <footer><div className="shell footer-main"><div className="footer-brand"><Link className="brand" to="/"><BerryMark /><span>pogberry</span></Link><p>A small language<br />for making games.</p></div><div><strong>DOCUMENTATION</strong><Link to="/learn">Language guide</Link><Link to="/learn#games">Making games</Link><Link to="/learn#graphics">Graphics API</Link></div><div><strong>PROJECT</strong><Link to="/examples">Examples</Link><Link to="/download">Install</Link><a href={repoUrl} target="_blank" rel="noreferrer">Source code ↗</a></div><div className="footer-note"><span>under development</span><p>Pogberry is built in C<br />and released as open source.</p></div></div><div className="shell footer-bottom"><span>POGBERRY</span><span>tyagidevansh/pogberry</span></div></footer>
+  return <footer><div className="shell footer-main"><div className="footer-brand"><Link className="brand" to="/"><BerryMark /><span>pogberry</span></Link><p>A small language<br />for making games.</p></div><div><strong>DOCUMENTATION</strong><Link to="/learn">Language guide</Link><Link to="/learn#games">Making games</Link><Link to="/learn#gui">2D Game Engine (pb_gui)</Link></div><div><strong>PROJECT</strong><Link to="/examples">Examples</Link><Link to="/download">Install</Link><a href={repoUrl} target="_blank" rel="noreferrer">Source code ↗</a></div><div className="footer-note"><span>under development</span><p>Pogberry is built in C<br />and released as open source.</p></div></div><div className="shell footer-bottom"><span>POGBERRY</span><span>tyagidevansh/pogberry</span></div></footer>
 }
 
 export function Layout({ children }) {
