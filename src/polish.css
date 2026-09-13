@@ -83,4 +83,40 @@
   .page-hero.pink { min-height: 365px; }
   .page-hero.pink .page-hero-copy { padding-block: 40px; }
   .page-hero.pink h1 { font-size: 3rem; }
+  .playable-source .code-window,
+  .hero-code-card .code-window {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .playable-source .code-window pre,
+  .hero-code-card .code-window pre {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
 }
+
+/* Code block horizontal scrolling & polish matching the editor */
+.code-window pre {
+  scrollbar-width: thin;
+  scrollbar-color: #554c60 #1e1a26;
+  overscroll-behavior-x: contain;
+}
+.code-window pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-window pre::-webkit-scrollbar-track {
+  background: #1e1a26;
+  border-radius: 0 0 10px 10px;
+}
+.code-window pre::-webkit-scrollbar-thumb {
+  background: #554c60;
+  border-radius: 3px;
+}
+.code-window pre::-webkit-scrollbar-thumb:hover {
+  background: #756a84;
+}
+

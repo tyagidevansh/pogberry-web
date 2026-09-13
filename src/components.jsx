@@ -44,7 +44,7 @@ export function highlight(source) {
 export function CodeBlock({ code, title = 'main.pb', compact = false }) {
   const [copied, setCopied] = useState(false)
   const copy = async () => { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1200) }
-  return <div className={`code-window${compact ? ' compact' : ''}`}><div className="code-window-bar"><i /><i /><i /><span>{title}</span><button onClick={copy}>{copied ? 'copied' : 'copy'}</button></div><pre><code dangerouslySetInnerHTML={{ __html: highlight(code) }} /></pre></div>
+  return <div className={`code-window${compact ? ' compact' : ''}`}><div className="code-window-bar"><i /><i /><i /><span>{title}</span><button onClick={copy}>{copied ? 'copied' : 'copy'}</button></div><pre tabIndex={0} aria-label={`Code snippet: ${title}`}><code dangerouslySetInnerHTML={{ __html: highlight(code) }} /></pre></div>
 }
 
 export function PixelGame() {
