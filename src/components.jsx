@@ -23,10 +23,30 @@ export function Footer() {
   return <footer><div className="shell footer-main"><div className="footer-brand"><Link className="brand" to="/"><BerryMark /><span>pogberry</span></Link><p>A small language<br />for making games.</p></div><div><strong>DOCUMENTATION</strong><Link to="/learn">Language guide</Link><Link to="/learn#games">Making games</Link><Link to="/learn#gui">2D Game Engine (pb_gui)</Link></div><div><strong>PROJECT</strong><Link to="/examples">Examples</Link><Link to="/download">Install</Link><a href={repoUrl} target="_blank" rel="noreferrer">Source code ↗</a></div><div className="footer-note"><span>under development</span><p>Pogberry is built in C<br />and released as open source.</p></div></div><div className="shell footer-bottom"><span>POGBERRY</span><span>tyagidevansh/pogberry</span></div></footer>
 }
 
+export function ScrollToTopButton() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  return (
+    <button
+      type="button"
+      className="scroll-to-top"
+      onClick={scrollToTop}
+      aria-label="Scroll to top"
+      title="Scroll to top"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      </svg>
+    </button>
+  )
+}
+
 export function Layout({ children }) {
   const location = useLocation()
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }) }, [location.pathname])
-  return <><a className="skip-link" href="#main">Skip to content</a><div className="grain" aria-hidden="true" /><Header /><main id="main">{children}</main><Footer /></>
+  return <><a className="skip-link" href="#main">Skip to content</a><div className="grain" aria-hidden="true" /><Header /><main id="main">{children}</main><Footer /><ScrollToTopButton /></>
 }
 
 export function SectionHead({ number, label, title, italic, text, inverse = false }) {
