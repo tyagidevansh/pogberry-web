@@ -222,7 +222,154 @@ fun draw() {
     20, 22, 16, 244, 240, 231);
   graphics.text("MOVE THE BASKET WITH LEFT AND RIGHT",
     20, 52, 13, 184, 174, 194);
-}` }
+} ` }
+  },
+  cube3d: {
+    title: '3D wireframe cube',
+    subtitle: 'Perspective projection and rotation',
+    description: 'Real time 3D perspective projection rotating eight cube vertices across pitch and yaw with depth scaling.',
+    controls: 'Arrow keys or WASD rotate, SPACE toggles spin',
+    entry: 'main.pb',
+    files: {
+      'main.pb': `use "engine.graphics";
+use "engine.input";
+use "std.math";
+use "math3d";
+
+let vertices = [
+  [-1.0, -1.0, -1.0],
+  [ 1.0, -1.0, -1.0],
+  [ 1.0,  1.0, -1.0],
+  [-1.0,  1.0, -1.0],
+  [-1.0, -1.0,  1.0],
+  [ 1.0, -1.0,  1.0],
+  [ 1.0,  1.0,  1.0],
+  [-1.0,  1.0,  1.0]
+];
+
+let edges = [
+  [0, 1], [1, 2], [2, 3], [3, 0],
+  [4, 5], [5, 6], [6, 7], [7, 4],
+  [0, 4], [1, 5], [2, 6], [3, 7]
+];
+
+let rotX = 0.4;
+let rotY = 0.6;
+let autoSpin = true;
+let spaceHeld = false;
+
+fun init() {
+  print("3D cube initialized.");
+}
+
+fun drawLine(x1, y1, x2, y2, r, g, b) {
+  let dx = x2 - x1;
+  let dy = y2 - y1;
+  let len = math.sqrt(dx * dx + dy * dy);
+  let steps = math.floor(len / 4.0);
+  if (steps < 1) steps = 1;
+  for (let s = 0; s <= steps; s = s + 1) {
+    let t = s / steps;
+    graphics.circle(x1 + dx * t, y1 + dy * t, 1.5, r, g, b);
+  }
+}
+
+fun update(dt) {
+  if (input.down("space")) {
+    if (!spaceHeld) {
+      autoSpin = !autoSpin;
+      spaceHeld = true;
+    }
+  } else {
+    spaceHeld = false;
+  }
+
+  if (autoSpin) {
+    rotX = rotX + 0.6 * dt;
+    rotY = rotY + 0.9 * dt;
+  }
+
+  if (input.down("left") or input.down("a")) rotY = rotY - 2.0 * dt;
+  if (input.down("right") or input.down("d")) rotY = rotY + 2.0 * dt;
+  if (input.down("up") or input.down("w")) rotX = rotX - 2.0 * dt;
+  if (input.down("down") or input.down("s")) rotX = rotX + 2.0 * dt;
+}
+
+fun draw() {
+  graphics.clear(24, 20, 32);
+
+  let projected = [];
+  for (let i = 0; i < len(vertices); i = i + 1) {
+    let v = vertices[i];
+    let pt = math3d.project(v[0], v[1], v[2], rotX, rotY, 260.0, 3.4, 320.0, 175.0);
+    projected.push(pt);
+  }
+
+  for (let e = 0; e < len(edges); e = e + 1) {
+    let edge = edges[e];
+    let p1 = projected[edge[0]];
+    let p2 = projected[edge[1]];
+    drawLine(p1[0], p1[1], p2[0], p2[1], 232, 79, 115);
+  }
+
+  for (let i = 0; i < len(projected); i = i + 1) {
+    let pt = projected[i];
+    let radius = 18.0 / pt[2];
+    if (radius < 2.0) radius = 2.0;
+    graphics.circle(pt[0], pt[1], radius, 244, 200, 77);
+    graphics.circle(pt[0], pt[1], radius * 0.5, 255, 255, 255);
+  }
+
+  graphics.text("3D PERSPECTIVE CUBE", 24, 20, 16, 244, 200, 77);
+  graphics.text("VERTICES 8   EDGES 12", 24, 46, 12, 184, 174, 194);
+  graphics.text("ARROWS/WASD ROTATE   SPACE TOGGLE SPIN", 24, 324, 12, 202, 193, 229);
+}`,
+      'math3d.pb': `use "std.math";
+
+export let pi = 3.14159265;
+export let twoPi = 6.2831853;
+
+export fun sin(x) {
+  let v = x;
+  while (v > pi) v = v - twoPi;
+  while (v < -pi) v = v + twoPi;
+  let v2 = v * v;
+  let v3 = v * v2;
+  let v5 = v3 * v2;
+  let v7 = v5 * v2;
+  let v9 = v7 * v2;
+  return v - v3 / 6.0 + v5 / 120.0 - v7 / 5040.0 + v9 / 362880.0;
+}
+
+export fun cos(x) {
+  return sin(x + 1.5707963);
+}
+
+export fun project(x, y, z, angleX, angleY, fov, dist, cx, cy) {
+  let cx_cos = cos(angleX);
+  let cx_sin = sin(angleX);
+  let cy_cos = cos(angleY);
+  let cy_sin = sin(angleY);
+
+  let x1 = x * cy_cos + z * cy_sin;
+  let y1 = y;
+  let z1 = -x * cy_sin + z * cy_cos;
+
+  let x2 = x1;
+  let y2 = y1 * cx_cos - z1 * cx_sin;
+  let z2 = y1 * cx_sin + z1 * cx_cos;
+
+  let depth = z2 + dist;
+  if (depth < 0.1) depth = 0.1;
+  let sx = cx + (x2 * fov) / depth;
+  let sy = cy + (y2 * fov) / depth;
+  return [sx, sy, depth];
+}`,
+      'README.txt': `main.pb is the entry file.
+math3d.pb provides trigonometric formulas and perspective projection.
+
+Use the arrow keys or WASD to rotate the cube. Press Space to toggle continuous spin.`
+    }
   }
 }
 
