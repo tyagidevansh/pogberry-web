@@ -173,7 +173,7 @@ export function LiveGame({ project, autoPlay = true }) {
 
 const editorTheme = EditorView.theme({
   '&': { height: '100%', backgroundColor: '#211d29', color: '#d8d0e1' },
-  '.cm-scroller': { overflow: 'auto', fontFamily: '"DM Mono", monospace', fontSize: '.76rem', lineHeight: '1.75' },
+  '.cm-scroller': { overflow: 'auto', fontFamily: '"DM Mono", monospace', fontSize: '.84rem', lineHeight: '1.75' },
   '.cm-content': { minHeight: '100%', padding: '18px 0', caretColor: '#fff' },
   '.cm-line': { padding: '0 18px' },
   '.cm-gutters': { minHeight: '100%', borderRight: '1px solid #342e3e', backgroundColor: '#1c1923', color: '#625a6c' },
